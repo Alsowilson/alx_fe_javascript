@@ -1,33 +1,153 @@
+/* === General Page Setup === */
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  color: #333;
+}
+
+/* === App Container === */
+.container {
+  background: #ffffff;
+  margin-top: 60px;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 700px;
   text-align: center;
-  background-color: #f4f4f9;
-  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* === Header === */
+h1 {
+  font-size: 2rem;
+  color: #4a4e69;
+  margin-bottom: 15px;
+}
+
+h2 {
+  font-size: 1.2rem;
+  color: #9a8c98;
+  margin-bottom: 25px;
+}
+
+/* === Quote Display === */
 .quote-box {
-  margin: 20px auto;
+  background: #fdfdfd;
+  border-left: 5px solid #4a4e69;
   padding: 20px;
-  width: 60%;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin: 20px 0;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  color: #333;
+  transition: background 0.3s;
 }
 
+.quote-box:hover {
+  background: #fafafa;
+}
+
+.quote-author {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #6c757d;
+}
+
+/* === Buttons === */
 button {
-  padding: 8px 16px;
+  background: #4a4e69;
+  color: #fff;
   border: none;
-  background-color: #0077ff;
-  color: white;
-  border-radius: 5px;
+  padding: 10px 18px;
+  margin: 8px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #005ce6;
+  background: #22223b;
+  transform: translateY(-2px);
 }
 
-.add-quote input {
-  padding: 8px;
-  margin: 5px;
+/* === Inputs & Forms === */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 8px 0;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* === Notification Toast === */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4a4e69;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.4s ease;
+  z-index: 1000;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === Category Filter === */
+.category-filter {
+  margin: 20px 0;
+}
+
+select {
+  background: #fff;
+  cursor: pointer;
+}
+
+/* === Footer === */
+footer {
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* === Responsive Design === */
+@media (max-width: 600px) {
+  .container {
+    padding: 25px 20px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  button {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
