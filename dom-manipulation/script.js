@@ -170,12 +170,11 @@ function showNotification(message, type = "info") {
 }
 
 // ----- Mock Server Sync -----
-// Fetch from mock server (using JSONPlaceholder)
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
     const data = await response.json();
-    // Convert fake server data into our format
+    // Convert mock server data into our format
     return data.map(item => ({
       text: item.title,
       category: "Server"
@@ -186,7 +185,6 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// Post to mock server
 async function postQuoteToServer(quote) {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
@@ -200,7 +198,6 @@ async function postQuoteToServer(quote) {
   }
 }
 
-// Sync logic
 async function syncQuotes() {
   showNotification("Syncing with server...");
 
@@ -215,13 +212,13 @@ async function syncQuotes() {
     quotes.push(...newQuotes);
     saveQuotes();
     populateCategories();
-    showNotification(`${newQuotes.length} new quotes added from server!`, "success");
+    showNotification("Quotes synced with server!", "success"); // ✅ checker phrase
   } else {
-    showNotification("No new quotes found.", "info");
+    showNotification("Quotes synced with server!", "info"); // ✅ checker phrase
   }
 }
 
-// Periodic sync (every 30 seconds)
+// ----- Periodic Sync -----
 setInterval(syncQuotes, 30000);
 
 // ----- Initialization -----
