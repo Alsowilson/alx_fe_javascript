@@ -1,6 +1,6 @@
+// ====== Dynamic Quote Generator with Filtering (Task 2) ======
 
-
-// Initial array of quotes (fallback if no local storage yet)
+// Initial array of quotes
 let quotes = [
   { text: "The best way to predict the future is to create it.", category: "Inspiration" },
   { text: "Code is like humor. When you have to explain it, it’s bad.", category: "Programming" },
@@ -10,20 +10,18 @@ let quotes = [
 // Selectors
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
+const categoryFilter = document.getElementById("categoryFilter");
 
-// ========== Local Storage Functions ==========
+// ========== Local & Session Storage ==========
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
 function loadQuotes() {
   const storedQuotes = localStorage.getItem("quotes");
-  if (storedQuotes) {
-    quotes = JSON.parse(storedQuotes);
-  }
+  if (storedQuotes) quotes = JSON.parse(storedQuotes);
 }
 
-// ========== Session Storage ==========
 function saveLastViewedQuote(quoteObj) {
   sessionStorage.setItem("lastViewedQuote", JSON.stringify(quoteObj));
 }
@@ -33,23 +31,37 @@ function getLastViewedQuote() {
   return stored ? JSON.parse(stored) : null;
 }
 
+// ========== Filter Persistence ==========
+function saveSelectedCategory(category) {
+  localStorage.setItem("selectedCategory", category);
+}
+
+function loadSelectedCategory() {
+  return localStorage.getItem("selectedCategory") || "all";
+}
+
 // ========== Quote Display ==========
 function showRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
+  const filteredCategory = categoryFilter.value;
+  let filteredQuotes = quotes;
 
-  quoteDisplay.innerHTML = "";
+  if (filteredCategory !== "all") {
+    filteredQuotes = quotes.filter(q => q.category.toLowerCase() === filteredCategory.toLowerCase());
+  }
 
-  const quoteText = document.createElement("p");
-  quoteText.textContent = `"${randomQuote.text}"`;
+  if (filteredQuotes.length === 0) {
+    quoteDisplay.innerHTML = `<p>No quotes available for "${filteredCategory}" category.</p>`;
+    return;
+  }
 
-  const quoteCategory = document.createElement("small");
-  quoteCategory.textContent = `Category: ${randomQuote.category}`;
+  const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+  const randomQuote = filteredQuotes[randomIndex];
 
-  quoteDisplay.appendChild(quoteText);
-  quoteDisplay.appendChild(quoteCategory);
+  quoteDisplay.innerHTML = `
+    <p>"${randomQuote.text}"</p>
+    <small>Category: ${randomQuote.category}</small>
+  `;
 
-  // Save last viewed quote in session storage
   saveLastViewedQuote(randomQuote);
 }
 
@@ -65,13 +77,12 @@ function addQuote() {
 
   const newQuote = { text: newQuoteText, category: newQuoteCategory };
   quotes.push(newQuote);
-
-  // Save to local storage
   saveQuotes();
 
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
 
+  populateCategories(); // Update dropdown if new category added
   alert("Quote added successfully!");
   showRandomQuote();
 }
@@ -124,6 +135,7 @@ function importFromJsonFile(event) {
       const importedQuotes = JSON.parse(event.target.result);
       quotes.push(...importedQuotes);
       saveQuotes();
+      populateCategories();
       alert("Quotes imported successfully!");
     } catch (error) {
       alert("Invalid JSON file format!");
@@ -132,19 +144,41 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
+// ========== Category Filtering ==========
+function populateCategories() {
+  const categories = [...new Set(quotes.map(q => q.category))];
+  const currentSelected = loadSelectedCategory();
+
+  categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
+
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    if (cat === currentSelected) option.selected = true;
+    categoryFilter.appendChild(option);
+  });
+}
+
+function filterQuotes() {
+  const selectedCategory = categoryFilter.value;
+  saveSelectedCategory(selectedCategory);
+  showRandomQuote();
+}
+
 // ========== Initialization ==========
 newQuoteBtn.addEventListener("click", showRandomQuote);
 document.getElementById("exportBtn").addEventListener("click", exportToJsonFile);
 
 function init() {
-  // Load quotes from local storage
   loadQuotes();
-
-  // Create add quote form dynamically
   createAddQuoteForm();
+  populateCategories();
 
-  // Show last viewed quote if available, otherwise random
   const lastViewed = getLastViewedQuote();
+  const lastCategory = loadSelectedCategory();
+  categoryFilter.value = lastCategory;
+
   if (lastViewed) {
     quoteDisplay.innerHTML = `<p>"${lastViewed.text}"</p><small>Category: ${lastViewed.category}</small>`;
   } else {
